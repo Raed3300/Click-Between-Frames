@@ -226,11 +226,20 @@ int calculateStepCount(double delta, float timewarp, bool forceVanilla) {
 bool safeMode;
 
 class $modify(PlayLayer) {
+#ifdef GEODE_IS_ANDROID64
+	// Android64 bindings have no useReplay parameter
+	bool init(GJGameLevel* level, bool dontCreateObjects) {
+#else
 	bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
+#endif
 		#ifdef GEODE_IS_WINDOWS
 		if (linuxNative) updateKeybinds(); // update keybinds when you enter a level (for linux)
 		#endif
+#ifdef GEODE_IS_ANDROID64
+		bool result = PlayLayer::init(level, dontCreateObjects);
+#else
 		bool result = PlayLayer::init(level, useReplay, dontCreateObjects);
+#endif
 		if (!softToggle) {
 			this->m_clickBetweenSteps = false;
 			this->m_clickOnSteps = false;
